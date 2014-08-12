@@ -1,0 +1,40 @@
+<div class="round-gray-box">
+    <div class="row" style="padding:1%;">
+        <div class="col-md-3">
+            <input type="text" class="form-control" style="margin-left:3%" ng-model="User" placeholder="Usuario">
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-default" style="width:50%;" ng-click="generate()" >Generar Tweet</button>
+        </div>
+    </div>
+
+    <div class="row" ng-show="getTweet">
+        <div class="row" style="padding:2%;">
+            <b> El siguiente tweet, qué tipo de sentimiento transmite?:</b>
+        </div>
+        <div class="tweet-block" >
+            Tottenham v Wigan: Match Preview::  Tottenham and Wigan are set to meet at White Hart Lane this Saturday as the ... http://t.co/hCcGRbLu
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3 col-md-offset-4">
+                <label class="radio-inline">
+                    <div class="Negative" ng-click = "setPolarity('negative')" ng-class = "{NegActive: (polarity == 'negative')}"/>
+                </label>
+                <label class="radio-inline">
+                    <div class="Neutral" ng-click = "setPolarity('neutral')" ng-class = "{NeuActive: (polarity == 'neutral')}"/>
+                </label>
+                <label class="radio-inline">
+                    <div class="Positive" ng-click = "setPolarity('positive')" ng-class = "{PosActive: (polarity == 'positive')}"/>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-md-offset-10">
+                <button class="btn btn-default" style="width:50%;" ng-click="vote()">Votar!</button>
+            </div>
+        </div>
+    </div>
+
+    {{User}}
+    {{polarity}}
+</div>
