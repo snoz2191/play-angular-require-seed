@@ -1,5 +1,5 @@
 /*
- * Author: Sari Haj Hussein
+ * Author: Domingo
  */
 
 var app = angular.module("app", ["ngResource","ngRoute"])
@@ -11,13 +11,9 @@ var app = angular.module("app", ["ngResource","ngRoute"])
                         templateUrl: "/assets/templates/main.html",
                         controller: "ListCtrl"
                     })
-                    .when("/create", {
-                        templateUrl: "/assets/templates/detail.html",
+                    .when("/rank", {
+                        templateUrl: "/assets/templates/rank.html",
                         controller: "CreateCtrl"
-                    })
-                    .when("/edit/:id", {
-                        templateUrl: "/assets/templates/detail.html",
-                        controller: "EditCtrl"
                     })
                     .otherwise({
                         redirectTo: "/"});
@@ -31,19 +27,29 @@ app.controller("AppCtrl", ["$scope", "$location", function($scope, $location) {
 	$scope.go = function (path) {
 		$location.path(path);
 	};
+
+	$scope.isActive = function (viewLocation) {
+        return viewLocation === $location.path();
+    };
 }]);
 
 // the list controller
 app.controller("ListCtrl", ["$scope", "$resource", "apiUrl", function($scope, $resource, apiUrl) {
     "use strict";
+    $scope.TweetText = "Tottenham v Wigan: Match Preview::  Tottenham and Wigan are set to meet at White Hart Lane this Saturday as the ... http://t.co/hCcGRbLu"
     $scope.generate = function(){
-        $scope.getTweet = true;
+        if ($scope.User) {
+            $scope.getTweet = true;
+        } else {
+            $scope.getTweet = false;
+        }
     }
 	$scope.setPolarity = function (pol){
 	    $scope.polarity = pol;
 
 	}
 }]);
+
 
 // the create controller
 app.controller("CreateCtrl", ["$scope", "$resource", "$timeout", "apiUrl", function($scope, $resource, $timeout, apiUrl) {
@@ -54,6 +60,8 @@ app.controller("CreateCtrl", ["$scope", "$resource", "$timeout", "apiUrl", funct
 		CreateCelebrity.save($scope.celebrity); // $scope.celebrity comes from the detailForm in public/html/detail.html
 		$timeout(function() { $scope.go('/'); }); // go back to public/html/main.html
 	};
+
+    $scope.orderProp = 'score';
 }]);
 
 // the edit controller
