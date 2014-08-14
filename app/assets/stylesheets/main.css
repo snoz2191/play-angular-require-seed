@@ -159,3 +159,7 @@ td.pad {
     background: #3584d7 !important;
     color: #fff !important;
 }
+
+input:focus:invalid{
+    border-color: #FA787E;
+}

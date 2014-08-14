@@ -38,11 +38,7 @@ app.controller("ListCtrl", ["$scope", "$resource", "apiUrl", function($scope, $r
     "use strict";
     $scope.TweetText = "Tottenham v Wigan: Match Preview::  Tottenham and Wigan are set to meet at White Hart Lane this Saturday as the ... http://t.co/hCcGRbLu"
     $scope.generate = function(){
-        if ($scope.User) {
-            $scope.getTweet = true;
-        } else {
-            $scope.getTweet = false;
-        }
+        $scope.getTweet = true;
     }
 	$scope.setPolarity = function (pol){
 	    $scope.polarity = pol;

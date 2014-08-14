@@ -1,5 +1,5 @@
 <div class="round-gray-box">
-    <form name="UserForm">
+    <form name="UserForm" ng-submit="UserForm.$valid && generate()">
         <div class="row" style="padding:1%;">
             <div class="col-md-3">
                 <input name="Username" type="text" class="form-control" style="margin-left:3%"
@@ -7,7 +7,7 @@
                        oninvalid="this.setCustomValidity('Introduzca un Usuario')" oninput="setCustomValidity('')">
             </div>
             <div class="col-md-3">
-                <button class="btn btn-default" style="width:50%;" ng-click="generate()" type="submit">Generar Tweet</button>
+                <button class="btn btn-default" style="width:50%;"  type="submit">Generar Tweet</button>
             </div>
         </div>
     </form>
