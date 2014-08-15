@@ -9,11 +9,11 @@ var app = angular.module("app", ["ngResource","ngRoute"])
 		return $routeProvider
                     .when("/", {
                         templateUrl: "/assets/templates/main.html",
-                        controller: "ListCtrl"
+                        controller: "MainCtrl"
                     })
                     .when("/rank", {
                         templateUrl: "/assets/templates/rank.html",
-                        controller: "CreateCtrl"
+                        controller: "RankCtrl"
                     })
                     .otherwise({
                         redirectTo: "/"});
@@ -34,12 +34,17 @@ app.controller("AppCtrl", ["$scope", "$location", function($scope, $location) {
 }]);
 
 // the list controller
-app.controller("ListCtrl", ["$scope", "$resource", "apiUrl", function($scope, $resource, apiUrl) {
+app.controller("MainCtrl", ["$scope", "$resource", "apiUrl", "$http", function($scope, $resource, apiUrl, $http) {
     "use strict";
-    $scope.TweetText = "Tottenham v Wigan: Match Preview::  Tottenham and Wigan are set to meet at White Hart Lane this Saturday as the ... http://t.co/hCcGRbLu"
+    //$scope.Tweet.Text = "Tottenham v Wigan: Match Preview::  Tottenham and Wigan are set to meet at White Hart Lane this Saturday as the ... http://t.co/hCcGRbLu"
     $scope.generate = function(){
-        $scope.getTweet = true;
+        $http.get('/tweets/'+ $scope.User).
+            success(function(data){
+                $scope.Tweet = data;
+                $scope.getTweet = true;
+            });
     }
+
 	$scope.setPolarity = function (pol){
 	    $scope.polarity = pol;
 
@@ -48,7 +53,7 @@ app.controller("ListCtrl", ["$scope", "$resource", "apiUrl", function($scope, $r
 
 
 // the create controller
-app.controller("CreateCtrl", ["$scope", "$resource", "$timeout", "apiUrl", function($scope, $resource, $timeout, apiUrl) {
+app.controller("RankCtrl", ["$scope", "$resource", "$timeout", "apiUrl", function($scope, $resource, $timeout, apiUrl) {
     "use strict";
 	// to save a celebrity
 	$scope.save = function() {
