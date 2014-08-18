@@ -27,30 +27,29 @@ import scala.concurrent.Future
     val collection = db[BSONCollection]("Tweets")
 
     /** list all tweets */
-    def index = Action.async {
-      val cursor = collection.find(BSONDocument(), BSONDocument()).cursor[Tweet] // get all the fields of all the tweets
-      cursor.collect[List]().map(s => Ok(Json.toJson(s))) // convert it to a JSON and return it
+    def index (UserUpd: String) = Action.async {
+      val cursor = collection.find(BSONDocument("User" -> ""), BSONDocument()).cursor[Tweet] // get all the fields of all the tweets
+      cursor.collect[List]().map(s => Ok(Json.toJson(s)))// convert it to a JSON and return it
     }
 
     def getTweet (UserUpd: String) = Action.async {
-      collection.find(BSONDocument("User" -> "")).one[Tweet].map{ t =>
+      collection.find(BSONDocument("User" -> "")).one[Tweet].flatMap{ t =>
         t.map{ tweet =>
-          collection.update(BSONDocument("id" -> tweet.id),BSONDocument("User" -> UserUpd)).map{
-            _ => Future(Ok(Json.toJson(tweet)))
-          }.recover { case _ => InternalServerError("asd") }
-        }.getOrElse( Future(BadRequest(":(")) )
-      }.recover { case _ => InternalServerError(":(") }
-
-      Future(Ok(""))
+          collection.update(BSONDocument("_id" -> tweet.id),BSONDocument("User" -> UserUpd)).map{
+            _ => Ok(Json.toJson(tweet))
+          }.recover { case _ => InternalServerError }
+        }.getOrElse( Future(BadRequest) )
+      }.recover { case _ => InternalServerError }
     }
-//    /** create a tweet from the given JSON */
-//    def create() = Action.async(parse.json) { request =>
-//      request.body.asOpt[Tweet].map { tweet =>
-//        collection.insert(tweet).map {
-//          S => Ok(Json.toJson(S))
-//        }.recover { case _ => InternalServerError}
-//      }.getOrElse(Future(BadRequest))
-//    }
+
+    /** create a tweet from the given JSON */
+    def create() = Action.async(parse.json) { request =>
+      request.body.asOpt[Tweet].map { tweet =>
+        collection.insert(tweet).map {
+          _ => Ok(Json.toJson(tweet))
+        }.recover { case _ => InternalServerError}
+      }.getOrElse(Future(BadRequest))
+    }
 //
 //
     //
@@ -80,7 +79,7 @@ import scala.concurrent.Future
     def updateTweet(id: String) = Action.async(parse.json) { request =>
 //      request.body.asOpt[Tweet].map { tweet =>
 //                collection.update(BSONDocument("_id" -> tweet.id), tweet).map {
-//                  S => Ok(Json.toJson(S))
+//                  _ => Ok(Json.toJson(tweet))
 //                }.recover { case _ => InternalServerError}
 //      }.getOrElse(Future(BadRequest))
 //

@@ -42,6 +42,9 @@ app.controller("MainCtrl", ["$scope", "$resource", "apiUrl", "$http", function($
             success(function(data){
                 $scope.Tweet = data;
                 $scope.getTweet = true;
+            }).
+            error(function(status){
+                alert("Fuck")
             });
     }
 

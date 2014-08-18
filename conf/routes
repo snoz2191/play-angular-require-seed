@@ -24,8 +24,8 @@ GET     /                       controllers.Application.index
 #GET     /authuser               controllers.Users.authUser()
 
 #Tweets
-GET      /tweets/:user                 controllers.Tweets.getTweet(user: String)
-#POST     /tweets/:id             controllers.Tweets.updateTweet(id: String)
+GET      /tweets/:user           controllers.Tweets.getTweet(user: String)
+#POST    /tweets/:id             controllers.Tweets.updateTweet(id: String)
 
 # Static
 # ~~~~
