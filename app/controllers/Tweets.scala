@@ -9,22 +9,14 @@ import models.Tweet.TweetBSONWriter
 import play.api.libs.json.Json
 import play.api.mvc.Action
 import play.api.mvc.Controller
-import play.modules.reactivemongo.MongoController
-import reactivemongo.api.collections.default.BSONCollection
-import reactivemongo.bson.BSONDocument
-import reactivemongo.bson.BSONDocumentIdentity
-import reactivemongo.bson.BSONObjectID
-import reactivemongo.bson.BSONObjectIDIdentity
-import reactivemongo.bson.BSONStringHandler
-import reactivemongo.bson.Producer.nameValue2Producer
-import models.Name.NameBSONWriter
 import scala.concurrent.Future
 
 /**
  * Created by domingo on 08/08/14.
  */
   object Tweets extends Controller with MongoController {
-    val collection = db[BSONCollection]("Tweets")
+
+    val collection = db.collection[BSONCollection]("Tweets")
 
     /** list all tweets */
     def index (UserUpd: String) = Action.async {
@@ -33,13 +25,18 @@ import scala.concurrent.Future
     }
 
     def getTweet (UserUpd: String) = Action.async {
-      collection.find(BSONDocument("User" -> "")).one[Tweet].flatMap{ t =>
+      collection.find(BSONDocument()).one[Tweet].flatMap{ t =>
+        println("blahhh"+ t)
         t.map{ tweet =>
+          println("dentro del option tweet")
           collection.update(BSONDocument("_id" -> tweet.id),BSONDocument("User" -> UserUpd)).map{
-            _ => Ok(Json.toJson(tweet))
-          }.recover { case _ => InternalServerError }
+            _ => println("blah")
+            Ok(Json.toJson(tweet))
+          }.recover { case _ => println("Fuck1")
+                                InternalServerError }
         }.getOrElse( Future(BadRequest) )
-      }.recover { case _ => InternalServerError }
+      }.recover { case _ => println("Fuck2")
+                            InternalServerError }
     }
 
     /** create a tweet from the given JSON */
