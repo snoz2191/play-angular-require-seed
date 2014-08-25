@@ -41,16 +41,30 @@ app.controller("MainCtrl", ["$scope", "$resource", "apiUrl", "$http", function($
         $http.get('/tweets/'+ $scope.User).
             success(function(data){
                 $scope.Tweet = data;
+                console.log($scope.Tweet)
                 $scope.getTweet = true;
             }).
             error(function(status){
-                alert("Fuck")
+                $scope.emptied = true;
+                $scope.getTweet = false;
             });
     }
 
-	$scope.setPolarity = function (pol){
-	    $scope.polarity = pol;
-
+	$scope.vote = function( vote ){
+        $scope.polarity = vote;
+        if ( vote == "negative") {
+            $scope.Tweet.NegVote += 1;
+        } else if ( vote == "neutral") {
+            $scope.Tweet.NeuVote += 1;
+        } else if ( vote == "positive") {
+            $scope.Tweet.PosiVote += 1;
+        }
+        console.log($scope.Tweet);
+        $http.post('/tweets' , $scope.Tweet).
+                    success(function(){
+                    }).
+                    error(function(status){
+                    });
 	}
 }]);
 

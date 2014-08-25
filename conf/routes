@@ -25,7 +25,7 @@ GET     /                       controllers.Application.index
 
 #Tweets
 GET      /tweets/:user           controllers.Tweets.getTweet(user: String)
-#POST    /tweets/:id             controllers.Tweets.updateTweet(id: String)
+POST     /tweets                 controllers.Tweets.updateTweet()
 
 # Static
 # ~~~~

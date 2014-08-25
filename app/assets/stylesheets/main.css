@@ -96,7 +96,7 @@ td.pad {
       background-image:url("../images/smiley_sad-512.png");
 }
 
-.PosActive{
+.Positive:active{
       width:40px;
       height:40px;
       background-size:100%;
@@ -104,7 +104,7 @@ td.pad {
       margin-left:0%;
 }
 
-.NeuActive{
+.Neutral:active{
       width:40px;
       height:40px;
       background-size:100%;
@@ -112,7 +112,7 @@ td.pad {
       margin-left:0%;
 }
 
-.NegActive{
+.Negative:active{
       margin-left:0%;
       width:40px;
       height:40px;

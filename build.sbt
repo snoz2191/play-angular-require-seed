@@ -16,12 +16,16 @@ scalaVersion := "2.10.4"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
+resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
+
 // Dependencies
 libraryDependencies ++= Seq(
   cache,
   filters,
-//Couchbase Client
-  "com.couchbase.client" % "couchbase-client" % "1.4.3"
+  // ReactiveMongo dependencies
+  "org.reactivemongo" %% "reactivemongo" % "0.10.5.akka23-SNAPSHOT",
+  // ReactiveMongo dependencies
+  "org.reactivemongo" %% "play2-reactivemongo" % "0.10.2"
 )
 
 unmanagedResourceDirectories in Assets += baseDirectory.value / "bower_components"
