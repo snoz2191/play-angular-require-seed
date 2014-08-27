@@ -52,9 +52,10 @@ import scala.concurrent.Future
     def getTweet (UserUpd: String) = Action.async {
       collection.find(BSONDocument("user" -> "")).one[Tweet].flatMap{ t =>
         t.map{ tweet =>
+          val blah = tweet.copy(user = Some.apply(UserUpd.toLowerCase()) )
           collection.update(BSONDocument("_id" -> tweet._id.get),
-            TweetBSONWriter.write(tweet)).map{
-            _ =>  Ok(Json.toJson(tweet))
+            blah).map{
+            _ =>  Ok(Json.toJson(blah))
           }.recover { case x => x.printStackTrace()
               InternalServerError("Interno") }
         }.getOrElse( Future(BadRequest("Fuck") ) )
