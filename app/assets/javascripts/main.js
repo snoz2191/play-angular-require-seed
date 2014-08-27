@@ -36,12 +36,13 @@ app.controller("AppCtrl", ["$scope", "$location", function($scope, $location) {
 // the list controller
 app.controller("MainCtrl", ["$scope", "$resource", "apiUrl", "$http", function($scope, $resource, apiUrl, $http) {
     "use strict";
-    //$scope.Tweet.Text = "Tottenham v Wigan: Match Preview::  Tottenham and Wigan are set to meet at White Hart Lane this Saturday as the ... http://t.co/hCcGRbLu"
+    //$scope.tweet.text = "Tottenham v Wigan: Match Preview::  Tottenham and Wigan are set to meet at White Hart Lane this Saturday as the ... http://t.co/hCcGRbLu"
     $scope.generate = function(){
         $http.get('/tweets/'+ $scope.User).
             success(function(data){
-                $scope.Tweet = data;
-                console.log($scope.Tweet)
+                $scope.tweet = data;
+                console.log($scope.tweet)
+                $scope.emptied = false;
                 $scope.getTweet = true;
             }).
             error(function(status){
@@ -53,14 +54,14 @@ app.controller("MainCtrl", ["$scope", "$resource", "apiUrl", "$http", function($
 	$scope.vote = function( vote ){
         $scope.polarity = vote;
         if ( vote == "negative") {
-            $scope.Tweet.NegVote += 1;
+            $scope.tweet.negvote += 1;
         } else if ( vote == "neutral") {
-            $scope.Tweet.NeuVote += 1;
+            $scope.tweet.neuvote += 1;
         } else if ( vote == "positive") {
-            $scope.Tweet.PosiVote += 1;
+            $scope.tweet.posivote += 1;
         }
-        console.log($scope.Tweet);
-        $http.post('/tweets' , $scope.Tweet).
+        console.log($scope.tweet);
+        $http.post('/tweets' , $scope.tweet).
                     success(function(){
                     }).
                     error(function(status){
