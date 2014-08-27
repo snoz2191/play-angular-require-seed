@@ -33,6 +33,14 @@ app.controller("AppCtrl", ["$scope", "$location", function($scope, $location) {
     };
 }]);
 
+app.filter('capitalize', function() {
+    return function(input, scope) {
+        if (input!=null)
+            input = input.toLowerCase();
+        return input.substring(0,1).toUpperCase()+input.substring(1);
+    }
+});
+
 // the list controller
 app.controller("MainCtrl", ["$scope", "$resource", "apiUrl", "$http", function($scope, $resource, apiUrl, $http) {
     "use strict";
@@ -71,8 +79,15 @@ app.controller("MainCtrl", ["$scope", "$resource", "apiUrl", "$http", function($
 
 
 // the create controller
-app.controller("RankCtrl", ["$scope", "$resource", "$timeout", "apiUrl", function($scope, $resource, $timeout, apiUrl) {
+app.controller("RankCtrl", ["$scope", "$resource", "$timeout", "apiUrl", "$http", function($scope, $resource, $timeout, apiUrl, $http) {
     "use strict";
+    $http.get('/rank').
+        success(function(data){
+            $scope.users = data
+            console.log($scope.users)
+        }).
+        error(function(status){
+        });
 	// to save a celebrity
 	$scope.save = function() {
 		var CreateCelebrity = $resource(apiUrl + "/celebrities/new"); // a RESTful-capable resource object

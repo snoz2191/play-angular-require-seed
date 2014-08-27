@@ -1,6 +1,9 @@
 package controllers
 
+import akka.actor.FSM.Failure
+import akka.actor.Status.Success
 import play.api.mvc._
+import reactivemongo.core.commands.{GroupField, SumValue, Match, Aggregate}
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.Tweet
 import models.Tweet._
@@ -28,18 +31,30 @@ import scala.concurrent.Future
     val collection = db.collection[BSONCollection]("tweets")
 
     /** list all tweets */
-    def index (UserUpd: String) = Action.async {
-      val cursor = collection.find(BSONDocument("user" -> ""), BSONDocument()).cursor[Tweet] // get all the fields of all the tweets
-      cursor.collect[List]().map(s => Ok(Json.toJson(s)))// convert it to a JSON and return it
-    }
+//    def index (UserUpd: String) = Action.async {
+//      val cursor = collection.find(BSONDocument("user" -> ""), BSONDocument()).cursor[Tweet] // get all the fields of all the tweets
+//      cursor.collect[List]().map(s => Ok(Json.toJson(s)))// convert it to a JSON and return it
+//    }
+
+//    def index () = Action.async {
+//      val query = Aggregate(collection.name,
+//        Seq(
+//          Match(BSONDocument("status" -> BSONDocument("$ne" -> ""))),
+//          GroupField("user")("score" -> SumValue(1))
+//        )
+//      )
+//      val cursor = collection.db.command(query) // get all the fields of all the tweets
+//      cursor.map {
+//       s =>  Ok(Json.toJson(s.toList))
+//      }
+//    }
 
     def getTweet (UserUpd: String) = Action.async {
       collection.find(BSONDocument("user" -> "")).one[Tweet].flatMap{ t =>
         t.map{ tweet =>
-          val blah = tweet.copy(user = Some(UserUpd.toLowerCase()) )
           collection.update(BSONDocument("_id" -> tweet._id.get),
-            blah).map{
-            _ =>  Ok(Json.toJson(blah))
+            TweetBSONWriter.write(tweet)).map{
+            _ =>  Ok(Json.toJson(tweet))
           }.recover { case x => x.printStackTrace()
               InternalServerError("Interno") }
         }.getOrElse( Future(BadRequest("Fuck") ) )
@@ -87,8 +102,7 @@ import scala.concurrent.Future
       request.body.asJson.fold(Future(BadRequest("no tiene un json")))(json =>
         json.validate[Tweet].fold(
          valid ={ tweet =>   collection.update(BSONDocument("_id" -> tweet._id.get),
-           BSONDocument("text" -> tweet.text, "posivote"->tweet.posivote,"neuvote"->tweet.neuvote,
-             "negvote"->tweet.negvote, "user" -> tweet.user)).map{
+           TweetBSONWriter.write(tweet)).map{
                _ => Ok(Json.toJson(tweet))
               }.recover { case _ => InternalServerError("fallo loco")}
          },

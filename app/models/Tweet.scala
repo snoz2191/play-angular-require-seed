@@ -43,7 +43,7 @@ object Tweet {
         "posivote" -> tweet.posivote,
         "neuvote" -> tweet.neuvote,
         "negvote" -> tweet.negvote,
-        "user" -> tweet.user)
+        "user" -> tweet.user.get)
   }
 
   /** deserialize a Tweet from a BSON */

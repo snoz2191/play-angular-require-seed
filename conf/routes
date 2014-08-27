@@ -27,6 +27,9 @@ GET     /                       controllers.Application.index
 GET      /tweets/:user           controllers.Tweets.getTweet(user: String)
 POST     /tweets                 controllers.Tweets.updateTweet()
 
+#Ranks
+GET      /rank                   controllers.Users.index()
+
 # Static
 # ~~~~
 
