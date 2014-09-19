@@ -42,14 +42,26 @@ app.filter('capitalize', function() {
 });
 
 // the list controller
-app.controller("MainCtrl", ["$scope", "$resource", "apiUrl", "$http", function($scope, $resource, apiUrl, $http) {
+app.controller("MainCtrl", ["$scope", "$resource", "apiUrl", "$http", "$timeout", "$rootScope",  function($scope, $resource, apiUrl, $http, $timeout, $rootScope) {
     "use strict";
-    //$scope.tweet.text = "Tottenham v Wigan: Match Preview::  Tottenham and Wigan are set to meet at White Hart Lane this Saturday as the ... http://t.co/hCcGRbLu"
+    $rootScope.voted = true;
+    var onTimeout = function() {
+        $rootScope.voted = true;
+        $scope.getTweet = false;
+        console.log("Timeout!")
+        $rootScope.tweet.user = "";
+        $http.post('/tweets' , $rootScope.tweet).
+            success(function(){
+                console.log("Update!")
+            }).
+            error(function(status){
+            });
+    };
+
     $scope.generate = function(){
         $http.get('/tweets/'+ $scope.User).
             success(function(data){
-                $scope.tweet = data;
-                console.log($scope.tweet)
+                $rootScope.tweet = data;
                 $scope.emptied = false;
                 $scope.getTweet = true;
             }).
@@ -57,37 +69,77 @@ app.controller("MainCtrl", ["$scope", "$resource", "apiUrl", "$http", function($
                 $scope.emptied = true;
                 $scope.getTweet = false;
             });
+        $rootScope.voted = false;
+        $scope.timer = $timeout(onTimeout, 60000);
     }
 
 	$scope.vote = function( vote ){
+        $rootScope.voted = true;
         $scope.polarity = vote;
         if ( vote == "negative") {
-            $scope.tweet.negvote += 1;
+            $rootScope.tweet.negvote += 1;
         } else if ( vote == "neutral") {
-            $scope.tweet.neuvote += 1;
+            $rootScope.tweet.neuvote += 1;
         } else if ( vote == "positive") {
-            $scope.tweet.posivote += 1;
+            $rootScope.tweet.posivote += 1;
         }
-        console.log($scope.tweet);
-        $http.post('/tweets' , $scope.tweet).
+        $http.post('/tweets' , $rootScope.tweet).
                     success(function(){
                     }).
                     error(function(status){
                     });
+        if ($scope.timer) $timeout.cancel($scope.timer);
 	}
+
+    $scope.$on("$destroy", function() {
+//        if ($scope.voted) {
+//
+//        } else {
+//            console.log("No voto!")
+//            $scope.tweet.user = "";
+//            $http.post('/tweets' , $scope.tweet).
+//                success(function(){
+//                    console.log("Update!")
+//                }).
+//                error(function(status){
+//                });
+//        }
+        if ($scope.timer) $timeout.cancel($scope.timer);
+    });
 }]);
 
 
 // the create controller
-app.controller("RankCtrl", ["$scope", "$resource", "$timeout", "apiUrl", "$http", function($scope, $resource, $timeout, apiUrl, $http) {
+app.controller("RankCtrl", ["$scope", "$resource", "$timeout", "apiUrl", "$http", "$rootScope", "$window", function($scope, $resource, $timeout, apiUrl, $http, $rootScope, $window) {
     "use strict";
-    $http.get('/rank').
-        success(function(data){
-            $scope.users = data
-            console.log($scope.users)
-        }).
-        error(function(status){
-        });
+    if ( $rootScope.voted == false && $rootScope.tweet != null ) {
+        console.log("No voto!")
+        $rootScope.tweet.user = "";
+        $http.post('/tweets' ,$rootScope.tweet).
+            success(function(){
+                //$window.location.reload();
+                console.log("Update!")
+            }).
+            error(function(status){
+            }).
+            then(function(){
+                $http.get('/rank').
+                    success(function(data){
+                        $scope.users = data
+                    }).
+                    error(function(status){
+                    });
+            });
+    } else {
+        $http.get('/rank').
+            success(function(data){
+                $scope.users = data
+            }).
+            error(function(status){
+            });
+    }
+
+
 	// to save a celebrity
 	$scope.save = function() {
 		var CreateCelebrity = $resource(apiUrl + "/celebrities/new"); // a RESTful-capable resource object
