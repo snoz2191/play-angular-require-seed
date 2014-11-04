@@ -1,5 +1,6 @@
 package controllers
 
+import akka.actor._
 import akka.actor.FSM.Failure
 import akka.actor.Status.Success
 import play.api.mvc._
@@ -9,7 +10,7 @@ import models.User
 import models.User._
 import models.User.UserBSONReader
 import models.User.UserBSONReader
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Action
 import play.api.mvc.Controller
 import play.modules.reactivemongo.MongoController
@@ -24,6 +25,10 @@ import reactivemongo.bson.BSONArray
 import reactivemongo.bson.Producer.nameValue2Producer
 import models.Name.NameBSONWriter
 import scala.concurrent.Future
+import play.api.Play.current
+import java.net._
+import java.io._
+import scala.io._
 
 /**
  * Created by domingo on 08/08/14.
@@ -48,6 +53,32 @@ object Users extends Controller with MongoController {
         }
       }
 
+  def socket = WebSocket.acceptWithActor[String, String] { request => out =>
+    MyWebSocketActor.props(out)
+  }
+
+  object MyWebSocketActor {
+    def props(out: ActorRef) = Props(new MyWebSocketActor(out))
+  }
+
+  class MyWebSocketActor(out: ActorRef) extends Actor {
+
+    val s = new Socket(InetAddress.getByName("localhost"), 9999)
+    lazy val socketIn = new BufferedSource(s.getInputStream()).getLines()
+    val socketOut = new PrintStream(s.getOutputStream())
+
+    def receive = {
+      case msg: String =>
+        socketOut.println(msg)
+        socketOut.flush()
+        out ! (socketIn.next())
+    }
+
+    override def postStop() = {
+      //self ! PoisonPill
+      s.close()
+    }
+  }
 
 }
 
