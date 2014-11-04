@@ -34,10 +34,8 @@ app.controller("AppCtrl", ["$scope", "$location", function($scope, $location) {
 }]);
 
 app.filter('capitalize', function() {
-    return function(input, scope) {
-        if (input!=null)
-            input = input.toLowerCase();
-        return input.substring(0,1).toUpperCase()+input.substring(1);
+    return function(input, all) {
+        return (!!input) ? input.replace(/([^\W_]+[^\s-]*) */g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}) : '';
     }
 });
 

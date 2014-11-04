@@ -46,6 +46,7 @@ object Tweet {
         "user" -> tweet.user.get)
   }
 
+
   /** deserialize a Tweet from a BSON */
   implicit object TweetBSONReader extends BSONDocumentReader[Tweet] {
     def read(doc: BSONDocument): Tweet = {

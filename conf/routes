@@ -30,6 +30,8 @@ POST     /tweets                 controllers.Tweets.updateTweet()
 #Ranks
 GET      /rank                   controllers.Users.index()
 
+#Classifier
+GET      /echo                   controllers.Classifier.socket
 # Static
 # ~~~~
 

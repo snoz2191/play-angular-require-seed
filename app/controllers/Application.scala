@@ -2,15 +2,18 @@ package controllers
 
 import java.io.File
 
+
 import models._
 import play.Play
-
 import play.api._
 import play.api.mvc._
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import play.api.cache._
+import play.api.mvc._
+import play.api.Play.current
+import akka.actor._
 
 /** Application controller, handles authentication */
 object Application extends Controller with Security {
@@ -18,6 +21,7 @@ object Application extends Controller with Security {
   def index = Action {
     Ok(views.html.index())
   }
+
 
   /**
    * Returns the JavaScript router that the client can use for "type-safe" routes.
@@ -93,9 +97,9 @@ object Application extends Controller with Security {
    * Discard the cookie [[AuthTokenCookieKey]] to have AngularJS no longer set the
    * X-XSRF-TOKEN in HTTP header.
    */
-  def logout() = HasToken(parse.empty) { token => userId => implicit request =>
-    Cache.remove(token)
-    Ok.discardingCookies(DiscardingCookie(name = AuthTokenCookieKey))
-  }
+//  def logout() = HasToken(parse.empty) { token => userId => implicit request =>
+//    Cache.remove(token)
+//    Ok.discardingCookies(DiscardingCookie(name = AuthTokenCookieKey))
+//  }
 
 }

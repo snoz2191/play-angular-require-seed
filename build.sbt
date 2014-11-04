@@ -2,7 +2,7 @@ import play.PlayScala
 
 
 // TODO Replace with your project's/module's name
-name := """play-angular-require-seed"""
+name := """play-angular-socket-server"""
 
 // TODO Set your organization here
 organization := "your.organization"
